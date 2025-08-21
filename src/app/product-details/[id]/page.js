@@ -2,8 +2,9 @@
 import axios from 'axios'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 
-export default function page() {
+export default function Page() {
     const [product, setProduct] = useState();
 
     let params = useParams()
@@ -34,18 +35,22 @@ export default function page() {
 
                     {/* Main Image */}
                     <div className="flex-1 flex items-center justify-center">
-                        <img
+                        <Image
                             src={product?.thumbnail || product?.images?.[0]}
                             alt={product?.title}
+                            width={400}
+                            height={350}
                             className="w-full max-h-[350px] object-contain rounded-lg shadow"
                         />
                     </div>
                     <div className="flex md:flex-col gap-2">
                         {product?.images?.map((img, idx) => (
-                            <img
+                            <Image
                                 key={idx}
                                 src={img}
                                 alt={`Thumbnail ${idx + 1}`}
+                                width={64}
+                                height={64}
                                 className={`w-16 h-16 object-cover rounded-md border cursor-pointer ${product?.thumbnail === img ? "border-blue-500 ring-2 ring-blue-300" : "border-gray-200"}`}
                                 onClick={() => setProduct({ ...product, thumbnail: img })}
                             />

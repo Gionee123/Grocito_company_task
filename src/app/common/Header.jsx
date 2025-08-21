@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 export default function Header() {
   return (
@@ -9,9 +10,11 @@ export default function Header() {
           {/* logo */}
           <div>
             <Link href="/">
-              <img
+              <Image
                 src="/Grocito-High-Quality-Logo.png"
                 alt="logo"
+                width={100}
+                height={50}
                 className="w-[100px] h-[50px]"
               />
             </Link>
