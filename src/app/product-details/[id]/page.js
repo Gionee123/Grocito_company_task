@@ -1,13 +1,18 @@
 "use client"
 import axios from 'axios'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Image from 'next/image'
+import { cartContext } from '../../context/CartContext'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { FaShoppingCart } from 'react-icons/fa'
 
 export default function Page() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { cart, setCart } = useContext(cartContext);
 
     let params = useParams()
     let paramsId = params.id
@@ -28,6 +33,39 @@ export default function Page() {
                 setLoading(false)
             })
     }, [paramsId])
+
+    const AddToCart = (productData) => {
+        const { price, title, brand, thumbnail, id } = productData;
+        console.log("Adding to cart:", price, title, brand, thumbnail, id);
+
+        const productObj = {
+            id,
+            price,
+            title,
+            brand,
+            thumbnail,
+            qty: 1,
+        };
+
+        const existingItem = cart.find((item) => item.id === id);
+
+        if (!existingItem) {
+            setCart([...cart, productObj]);
+            toast.success("Product added to cart!", {
+                position: "top-right",
+                autoClose: 500,
+            });
+        } else {
+            const updatedCart = cart.map((item) =>
+                item.id === id ? { ...item, qty: item.qty + 1 } : item
+            );
+            setCart(updatedCart);
+            toast.success(`${title} quantity updated successfully!`, {
+                position: "top-right",
+                autoClose: 500,
+            });
+        }
+    };
 
     if (loading) {
         return (
@@ -116,8 +154,29 @@ export default function Page() {
                         <li className='text-red-800 my-[2px]'>stock: <span className='text-[green]'>{product.stock}</span></li>
                         <li className='text-red-800 my-[2px]'>category: <span className='text-[green]'>{product.category}</span></li>
                     </ul>
+
+                    {/* Add to Cart Button */}
+                    <div className="mt-6 p-4">
+                        <button
+                            onClick={() => AddToCart(product)}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg"
+                        >
+                            <FaShoppingCart className="text-lg" />
+                            Add to Cart
+                        </button>
+
+                        {/* Show current cart quantity if item exists */}
+                        {cart.find(item => item.id === product.id) && (
+                            <div className="mt-3 text-center">
+                                <p className="text-sm text-gray-600">
+                                    In cart: {cart.find(item => item.id === product.id)?.qty || 0} items
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     )
 }
