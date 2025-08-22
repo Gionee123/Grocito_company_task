@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { cartContext } from '../context/CartContext';
 import Image from 'next/image';
 
-export default function page() {
+export default function Page() {
 
     let { cart, setCart } = useContext(cartContext);
 
