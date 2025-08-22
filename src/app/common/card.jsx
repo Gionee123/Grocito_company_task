@@ -1,8 +1,52 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import React, { useContext } from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import { cartContext } from "../context/CartContext";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Card({ products, setProducts }) {
+  let { cart, setCart } = useContext(cartContext); // context api
+
+  let AddToCart = (data) => {
+    let { price, title, brand, thumbnail, id } = data;
+    console.log("data", price, title, brand, thumbnail, id);
+
+    let projectObj = {
+      id,
+      price,
+      title,
+      brand,
+      thumbnail,
+      qty: 1,
+    };
+
+    let filterData = cart.filter((data) => data.id == id);
+
+    let finalData;
+
+    if (filterData.length == 0) {
+      finalData = [...cart, projectObj];
+      setCart(finalData);
+      toast.success("Product added to cart!", {
+        position: "top-right",
+        autoClose: 500,
+      });
+    } else {
+      let finalData = cart.filter((data, index) => {
+        if (data.id == id) {
+          data["qty"] = data["qty"] + 1;
+        }
+        return data;
+      });
+      setCart(finalData);
+      toast.success(title + " quantity updated successfully", {
+        position: "top-right",
+        autoClose: 500,
+      });
+    }
+  };
+
   return (
     <>
       <div className="container my-12 mx-auto px-4 sm:px-6 md:px-12">
@@ -17,7 +61,7 @@ export default function Card({ products, setProducts }) {
                   <img
                     alt={v.title}
                     className="h-40 w-full object-contain"
-                    src={v.images}
+                    src={v.thumbnail}
                   />
                 </Link>
 
@@ -30,7 +74,10 @@ export default function Card({ products, setProducts }) {
                     Price: ${v.price}
                   </p>
 
-                  <button className="mt-2 sm:mt-0 flex justify-end cursor-pointer hover:bg-red-200 rounded-full p-2">
+                  <button
+                    className="mt-2 sm:mt-0 flex justify-end cursor-pointer hover:bg-red-200 rounded-full p-2"
+                    onClick={() => AddToCart(v)}
+                  >
                     <span className="text-lg sm:text-xl text-gray-700">
                       <FaShoppingCart />
                     </span>
@@ -45,6 +92,7 @@ export default function Card({ products, setProducts }) {
           )}
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

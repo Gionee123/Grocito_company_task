@@ -2,13 +2,14 @@
 import Image from "next/image";
 import Card from "./common/card";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { cartContext } from "./context/CartContext";
 
 export default function Home() {
+  let { cart, setCart } = useContext(cartContext) // context api
 
-  let [products, setProducts] = useState([])
-  let [categories, setCategories] = useState([])
-
+  let [products, setProducts] = useState([]) // all product api
+  let [categories, setCategories] = useState([]) // category list api
   let [catName, setCatName] = useState("")
 
 
